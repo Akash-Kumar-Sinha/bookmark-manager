@@ -1,0 +1,87 @@
+scalar UUID
+scalar Time
+
+enum EnrichmentStatus {
+  pending
+  done
+  failed
+}
+
+type Profile {
+  id: UUID! # ! indicates that the field is required
+  email: String!
+  username: String!
+  firstName: String!
+  lastName: String
+  avatar: String!
+  bookmarks: [Bookmark!]!
+  tags: [Tag!]!
+  createdAt: Time!
+}
+
+type Bookmark {
+  id: UUID!
+  url: String!
+  title: String
+  notes: String
+  status: EnrichmentStatus!
+  tags: [Tag!]!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type Tag {
+  id: UUID!
+  name: String!
+  bookmarks: [Bookmark!]!
+  createdAt: Time!
+}
+
+type BookmarkConnection {
+  edges: [BookmarkEdge!]!
+  pageInfo: PageInfo!
+}
+
+type BookmarkEdge {
+  cursor: String!
+  node: Bookmark!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  endCursor: String
+}
+
+input CreateBookmarkInput {
+  url: String!
+  title: String
+  notes: String
+  tagNames: [String!]
+}
+
+input UpdateBookmarkInput {
+  title: String
+  notes: String
+  tagNames: [String!]
+  status: EnrichmentStatus # add this line
+}
+
+
+type Query {
+  bookmarks(
+    tag: String
+    search: String
+    limit: Int
+    after: String
+  ): BookmarkConnection!
+  bookmark(id: UUID!): Bookmark
+  tags: [Tag!]!
+}
+
+type Mutation {
+  createBookmark(input: CreateBookmarkInput!): Bookmark!
+  updateBookmark(id: UUID!, input: UpdateBookmarkInput!): Bookmark!
+  deleteBookmark(id: UUID!): Boolean!
+  createTag(name: String!): Tag!
+  deleteTag(id: UUID!): Boolean!
+}

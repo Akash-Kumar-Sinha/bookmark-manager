@@ -1,0 +1,9 @@
+services:
+  shelf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
